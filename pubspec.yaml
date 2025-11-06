@@ -17,6 +17,7 @@ dependencies:
   intl: ^0.18.1
   sqflite_common_ffi: ^2.3.0
   fl_chart: ^0.63.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
