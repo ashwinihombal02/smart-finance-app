@@ -10,7 +10,7 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => FinanceProvider(),
-        child: const MaterialApp(home: DashboardPage()),
+        child: MaterialApp(home: DashboardPage()),
       ),
     );
 

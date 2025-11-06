@@ -9,7 +9,8 @@ import 'Transaction_Page.dart';
 import 'Budget_Page.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  DashboardPage({super.key});
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -19,41 +20,27 @@ class DashboardPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color(0xFFEFFFEF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: Builder(
-          builder: (context) => GestureDetector(
-            onTap: () {
-              // Opens the drawer
-              Scaffold.of(context).openDrawer();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 2,
-                    color: Colors.black87,
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 24,
-                    height: 2,
-                    color: Colors.black87,
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 24,
-                    height: 2,
-                    color: Colors.black87,
-                  ),
-                ],
-              ),
+        leading: GestureDetector(
+          onTap: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(width: 24, height: 2, color: Colors.black87),
+                const SizedBox(height: 4),
+                Container(width: 24, height: 2, color: Colors.black87),
+                const SizedBox(height: 4),
+                Container(width: 24, height: 2, color: Colors.black87),
+              ],
             ),
           ),
         ),
@@ -65,11 +52,7 @@ class DashboardPage extends StatelessWidget {
             fontSize: MediaQuery.of(context).size.width * 0.05,
           ),
         ),
-        actions: const [
-          SizedBox(width: 10), // Remove notification icon here
-        ],
       ),
-
       drawer: _buildDrawer(context),
       floatingActionButton: _buildFloatingActionButtons(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -423,7 +406,7 @@ class DashboardPage extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             // Keep chart small and responsive
-            final chartSize = constraints.maxWidth * 0.5; // 50% of available width
+            final chartSize = constraints.maxWidth * 0.6; // 50% of available width
             final radius = chartSize * 0.4;
             final centerRadius = chartSize * 0.2;
             final fontSize = chartSize * 0.08;
@@ -441,17 +424,17 @@ class DashboardPage extends StatelessWidget {
                     return PieChartSectionData(
                       color: color.shade400,
                       value: e.value,
-                      title: '${e.key}\n${percentage.toStringAsFixed(1)}%',
-                      radius: radius,
+                      title: '${percentage.toStringAsFixed(1)}%',
+                      radius: chartSize * 0.4,
                       titleStyle: GoogleFonts.poppins(
-                        fontSize: fontSize,
+                        fontSize: chartSize * 0.08,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     );
                   }).toList(),
                   sectionsSpace: 2,
-                  centerSpaceRadius: centerRadius,
+                  centerSpaceRadius: chartSize * 0.2,
                 ),
               ),
             );

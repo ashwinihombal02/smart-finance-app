@@ -28,7 +28,7 @@ class SmartFinanceApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.teal),
         initialRoute: '/',
         routes: {
-          '/': (_) => const DashboardPage(),
+          '/': (_) => DashboardPage(),
           '/transactions': (_) => const TransactionsPage(),
           '/add': (_) => const AddEditTransactionPage(),
         },
