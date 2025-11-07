@@ -25,31 +25,28 @@ class DashboardPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: GestureDetector(
-          onTap: () {
+        leading: IconButton(
+          icon: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(width: 24, height: 2, color: Colors.black87),
+              const SizedBox(height: 4),
+              Container(width: 24, height: 2, color: Colors.black87),
+              const SizedBox(height: 4),
+              Container(width: 24, height: 2, color: Colors.black87),
+            ],
+          ),
+          onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(width: 24, height: 2, color: Colors.black87),
-                const SizedBox(height: 4),
-                Container(width: 24, height: 2, color: Colors.black87),
-                const SizedBox(height: 4),
-                Container(width: 24, height: 2, color: Colors.black87),
-              ],
-            ),
-          ),
         ),
         title: Text(
           'Smart Finance',
           style: GoogleFonts.poppins(
             color: Colors.black87,
             fontWeight: FontWeight.w600,
-            fontSize: MediaQuery.of(context).size.width * 0.05,
+            fontSize: size.width * 0.05,
           ),
         ),
       ),
@@ -152,8 +149,8 @@ class DashboardPage extends StatelessWidget {
         required String text,
         required VoidCallback onTap}) {
     return ListTile(
-      leading: Icon(icon, color: Colors.green.shade600),
-      title: Text(text, style: GoogleFonts.poppins(fontSize: 16)),
+      leading: Icon(icon, color: Colors.green.shade600), // Material Icon only
+      title: Text(text, style: GoogleFonts.poppins(fontSize: 16)), // Only text uses Poppins
       onTap: onTap,
     );
   }
@@ -162,7 +159,6 @@ class DashboardPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Transactions button
         FloatingActionButton.extended(
           heroTag: "transactions_fab",
           onPressed: () => Navigator.push(
@@ -170,13 +166,14 @@ class DashboardPage extends StatelessWidget {
             MaterialPageRoute(builder: (_) => const TransactionsPage()),
           ),
           backgroundColor: Colors.white,
-          icon: const Icon(Icons.swap_horiz_rounded, color: Colors.teal),
-          label: Text("Transactions",
-              style: GoogleFonts.poppins(
-                  color: Colors.teal, fontWeight: FontWeight.w600)),
+          icon: const Icon(Icons.history, color: Colors.teal),
+          label: Text(
+            "Transactions",
+            style: GoogleFonts.poppins(
+                color: Colors.teal, fontWeight: FontWeight.w600),
+          ),
         ),
         const SizedBox(width: 12),
-        // Add Transaction button
         FloatingActionButton.extended(
           heroTag: "add_fab",
           onPressed: () => Navigator.push(
@@ -184,10 +181,12 @@ class DashboardPage extends StatelessWidget {
             MaterialPageRoute(builder: (_) => const AddEditTransactionPage()),
           ),
           backgroundColor: Colors.greenAccent.shade400,
-          icon: const Icon(Icons.add_rounded, color: Colors.black),
-          label: Text("Add",
-              style: GoogleFonts.poppins(
-                  color: Colors.black, fontWeight: FontWeight.bold)),
+          icon: const Icon(Icons.add, color: Colors.black),
+          label: Text(
+            "Add",
+            style: GoogleFonts.poppins(
+                color: Colors.black, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     );
@@ -390,57 +389,64 @@ class DashboardPage extends StatelessWidget {
   Widget _buildPieChart(Map<String, double> data, Size size) {
     final filteredData = {...data}..removeWhere((key, value) => value == 0);
     if (filteredData.isEmpty) {
-      return Text('No expense data available.',
-          style: GoogleFonts.poppins(fontSize: size.width * 0.035));
+      return Padding(
+        padding: EdgeInsets.only(top: size.height * 0.04),
+        child: Text('No expense data available.',
+            style: GoogleFonts.poppins(fontSize: size.width * 0.035)),
+      );
     }
 
     final total = filteredData.values.fold<double>(0.0, (sum, value) => sum + value);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Expenses by Category',
-            style: GoogleFonts.poppins(
-                fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 10),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // Keep chart small and responsive
-            final chartSize = constraints.maxWidth * 0.6; // 50% of available width
-            final radius = chartSize * 0.4;
-            final centerRadius = chartSize * 0.2;
-            final fontSize = chartSize * 0.08;
+    return Padding(
+      padding: EdgeInsets.only(top: size.height * 0.06), // Increased space
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('Expenses by Category',
+              style: GoogleFonts.poppins(
+                  fontSize: size.width * 0.045, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final chartSize = constraints.maxWidth * 0.45; // keep small
+              final radius = chartSize * 0.4;
+              final centerRadius = chartSize * 0.2;
+              final fontSize = chartSize * 0.08;
 
-            return SizedBox(
-              height: chartSize,
-              width: chartSize,
-              child: PieChart(
-                PieChartData(
-                  sections: filteredData.entries.map((e) {
-                    final percentage = (e.value / total) * 100;
-                    final color = Colors.primaries[
-                    filteredData.keys.toList().indexOf(e.key) %
-                        Colors.primaries.length];
-                    return PieChartSectionData(
-                      color: color.shade400,
-                      value: e.value,
-                      title: '${percentage.toStringAsFixed(1)}%',
-                      radius: chartSize * 0.4,
-                      titleStyle: GoogleFonts.poppins(
-                        fontSize: chartSize * 0.08,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  }).toList(),
-                  sectionsSpace: 2,
-                  centerSpaceRadius: chartSize * 0.2,
+              return Center(
+                child: SizedBox(
+                  height: chartSize,
+                  width: chartSize,
+                  child: PieChart(
+                    PieChartData(
+                      sections: filteredData.entries.map((e) {
+                        final percentage = (e.value / total) * 100;
+                        final color = Colors.primaries[
+                        filteredData.keys.toList().indexOf(e.key) %
+                            Colors.primaries.length];
+                        return PieChartSectionData(
+                          color: color.shade400,
+                          value: e.value,
+                          title: '${percentage.toStringAsFixed(1)}%',
+                          radius: radius,
+                          titleStyle: GoogleFonts.poppins(
+                            fontSize: fontSize,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }).toList(),
+                      sectionsSpace: 2,
+                      centerSpaceRadius: centerRadius,
+                    ),
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-      ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
